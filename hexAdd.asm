@@ -1,48 +1,51 @@
 section .data
-    num1 db "A1", 0Ah
-    a db 0xA1
+    digits db "0123456789ABCDEF"
     
-    num2 db "2B", 0Ah
-    b db 0x2B
-    
-    newLine db 0Ah
+    msg db 'Sum of the hex numbers: ', 0
+    msgLen equ $-msg
 
 section .bss
-    msg resb 3
+    unpacked resb 3
+    num1 resb 3
+    num2 resb 3
 
 section .text
     global _start
 
 _start:
+    mov rbx, 0xAF
+    mov [num1], rbx
+    mov rbx, 0x2B
+    mov [num2], rbx
+
+    mov rax, [num1]
+    add rax, [num2]
+    mov rbx, rax
+    mov rcx, 3
+    mov rdi, unpacked + 2
+
+unpack_loop:
+    mov rax, rbx
+    and rax, 0xF
+    mov rdx, rax
+    mov al, [digits + rdx]
+    mov [rdi], al
+    shr rbx, 4
+    dec rdi
+    loop unpack_loop
+
     mov rax, 1
     mov rdi, 1
-    mov rsi, num1
-    mov rdx, 3
-    syscall
-    
-    mov rax, 1
-    mov rdi, 1
-    mov rsi, num2
-    mov rdx, 3
+    mov rsi, msg
+    mov rdx, msgLen
     syscall
 
     mov rax, 1
     mov rdi, 1
-    mov rsi, newLine
+    mov rsi, unpacked
     mov rdx, 3
     syscall
 
-    mov rbx, [a]
-    add rbx, [b]
-    
-    syscall
-    
-    mov rax, 1
-    mov rdi, 1
-    mov rsi, rbx
-    mov rdx, 3
-    syscall
-    
-    mov rax, 60
-    mov rdi, 0
+    mov eax, 60
+    xor edi, edi
     syscall
