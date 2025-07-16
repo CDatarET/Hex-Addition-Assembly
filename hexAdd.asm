@@ -5,26 +5,42 @@ section .data
     msgLen equ $-msg
 
 section .bss
-    unpacked resb 3
+    result resb 4
     num1 resb 3
     num2 resb 3
+    num3 resb 3
+    num4 resb 3
+    num5 resb 3
 
 section .text
     global _start
 
 _start:
-    mov rbx, 0xAF
+    mov rbx, 11h
     mov [num1], rbx
-    mov rbx, 0x2B
+    
+    mov rbx, 12h
     mov [num2], rbx
+    
+    mov rbx, 13h
+    mov[num3], rbx
+    
+    mov rbx, 14h
+    mov[num4], rbx
+    
+    mov rbx, 15h
+    mov[num5], rbx
 
     mov rax, [num1]
     add rax, [num2]
+    add rax, [num3]
+    add rax, [num4]
+    add rax, [num5]
     mov rbx, rax
     mov rcx, 3
-    mov rdi, unpacked + 2
+    mov rdi, result + 2
 
-unpack_loop:
+addLoop:
     mov rax, rbx
     and rax, 0xF
     mov rdx, rax
@@ -32,17 +48,17 @@ unpack_loop:
     mov [rdi], al
     shr rbx, 4
     dec rdi
-    loop unpack_loop
+    loop addLoop
 
     mov rax, 1
     mov rdi, 1
     mov rsi, msg
     mov rdx, msgLen
     syscall
-
+    
     mov rax, 1
     mov rdi, 1
-    mov rsi, unpacked
+    mov rsi, result
     mov rdx, 3
     syscall
 
