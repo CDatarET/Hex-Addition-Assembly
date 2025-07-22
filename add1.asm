@@ -17,7 +17,8 @@ section .bss
 
 section .text
     global _start
-    _start:
+    
+_start:
         rw 1,1,msg,msglen
         mov rsi , numArray
         mov ax ,00h
